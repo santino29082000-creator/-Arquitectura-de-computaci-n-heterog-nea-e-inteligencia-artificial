@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Evaluación: Arquitecturas de Computación Heterogénea 2025-2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fce4ec 0%, #fff3e0 50%, #e0f2f1 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Poppins', system-ui, sans-serif;
+            padding: 1rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quiz-wrapper {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            background: #fffffff0;
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.25);
+            padding: 1.8rem;
+            transition: all 0.2s;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.2rem;
+            border-bottom: 4px solid #ff8c42;
+            padding-bottom: 0.7rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #1e6f9f, #e67e22);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.2px;
+        }
+
+        .sub {
+            color: #e67e22;
+            font-size: 0.85rem;
+            margin-top: 0.2rem;
+            font-weight: 600;
+        }
+
+        .progress-area {
+            background: #e6e0f0;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #1a4a6e;
+            font-weight: 700;
+        }
+
+        .question-counter {
+            font-weight: 800;
+            background: #ffcc88;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            color: #5a3a1a;
+        }
+
+        .score-badge {
+            background: #88ccaa;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-weight: 700;
+            color: #1a4a2e;
+        }
+
+        /* Colores vibrantes por pregunta */
+        .question-card {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            padding: 1.3rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            border-left: 8px solid #ff8c42;
+            border-right: 1px solid #f0e0d0;
+            transition: all 0.2s;
+        }
+
+        .question-card.tono-1 { border-left-color: #FF6B6B; background: #fff5f5; }
+        .question-card.tono-2 { border-left-color: #4ECDC4; background: #f0fffe; }
+        .question-card.tono-3 { border-left-color: #FFE66D; background: #fffdf0; }
+        .question-card.tono-4 { border-left-color: #A8E6CF; background: #f4fff8; }
+        .question-card.tono-5 { border-left-color: #FFB347; background: #fff7e8; }
+        .question-card.tono-6 { border-left-color: #B980F0; background: #f9f0ff; }
+        .question-card.tono-7 { border-left-color: #FF8C94; background: #fff0f2; }
+        .question-card.tono-8 { border-left-color: #6C5B7B; background: #f4f0f8; }
+        .question-card.tono-9 { border-left-color: #F08A5D; background: #fff4e8; }
+        .question-card.tono-10 { border-left-color: #83C5BE; background: #f0faf8; }
+
+        .question-text {
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: #2c3e66;
+            margin-bottom: 1.2rem;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            cursor: pointer;
+            padding: 0.6rem 0.8rem;
+            border-radius: 1rem;
+            background: #fefaf5;
+            border: 2px solid #e0d0c0;
+            transition: all 0.15s;
+        }
+
+        .option:hover {
+            background: #fff4e6;
+            border-color: #ffaa66;
+            transform: scale(1.01);
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #e67e22;
+            border-radius: 50%;
+            margin-top: 0.1rem;
+            cursor: pointer;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        input[type="radio"]:checked {
+            background-color: #e67e22;
+            border-color: #e67e22;
+            box-shadow: inset 0 0 0 3px white;
+        }
+
+        .option label {
+            flex: 1;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            cursor: pointer;
+            color: #2c3e66;
+            font-weight: 600;
+        }
+
+        .feedback {
+            margin-top: 0.8rem;
+            padding: 0.7rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            background: #fef7e8;
+            border-left: 5px solid;
+            line-height: 1.4;
+            color: #2c3e50;
+        }
+
+        .feedback.correct {
+            border-left-color: #44aa66;
+            background: #e0ffe8;
+        }
+
+        .feedback.incorrect {
+            border-left-color: #ff6666;
+            background: #ffe6e6;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            border: none;
+            background: #ddd0c0;
+            color: #4a3a2a;
+            font-weight: 800;
+            padding: 0.6rem 1.3rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: #3a86ff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2a6ad0;
+            transform: scale(1.02);
+        }
+
+        .btn-secondary {
+            background: #e67e22;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #d46a10;
+        }
+
+        .btn-reset {
+            background: #cc6644;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #aa4422;
+        }
+
+        .btn-success {
+            background: #44aa66;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #338855;
+        }
+
+        .results-area {
+            margin-top: 1.5rem;
+            background: #fff2e0;
+            border-radius: 1.2rem;
+            padding: 1rem;
+            border: 2px solid #ffaa33;
+            display: none;
+        }
+
+        .results-area h3 {
+            color: #cc5500;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-summary {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: bold;
+            color: #1f4a2e;
+        }
+
+        .result-detail {
+            max-height: 280px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+        }
+
+        .result-item {
+            padding: 0.4rem;
+            border-bottom: 1px solid #ffd9a0;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            margin-top: 1.2rem;
+            color: #aa8855;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-wrapper {
+                padding: 1rem;
+            }
+            .question-text {
+                font-size: 0.98rem;
+            }
+            .option label {
+                font-size: 0.88rem;
+            }
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="quiz-wrapper">
+    <div class="header">
+        <h1>⚙️ Computación Heterogénea 2025-2026</h1>
+        <div class="sub">Intel Thread Director · Memoria unificada · Chiplets · NPUs · Tendencias</div>
+    </div>
+
+    <div class="progress-area">
+        <span class="question-counter" id="questionCounter">Pregunta 1 / 20</span>
+        <span class="score-badge" id="liveScore">✅ Aciertos: 0</span>
+    </div>
+
+    <div id="questionContainer"></div>
+
+    <div class="nav-buttons">
+        <button id="prevBtn" class="btn btn-secondary">◀ Anterior</button>
+        <button id="nextBtn" class="btn btn-primary">Siguiente ▶</button>
+        <button id="resetBtn" class="btn btn-reset">⟳ Reiniciar</button>
+        <button id="correctionBtn" class="btn btn-success">🔒 Corrección total</button>
+    </div>
+
+    <div id="resultsPanel" class="results-area"></div>
+    <footer>📌 Selecciona una opción → retroalimentación inmediata. Al finalizar, solicita corrección al profesor.</footer>
+</div>
+
+<script>
+    // ==================== MEDIDAS DE SEGURIDAD ====================
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12') {
+            e.preventDefault();
+            return false;
+        }
+        if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'K' || e.key === 'E' || e.key === 'M')) ||
+            (e.ctrlKey && e.key === 'u') ||
+            (e.ctrlKey && e.key === 's')) {
+            e.preventDefault();
+            return false;
+        }
+        document.addEventListener('contextmenu', function(ev) {
+            ev.preventDefault();
+            return false;
+        });
+    });
+
+    // ==================== DATOS DEL CUESTIONARIO ====================
+    const questionsData = [
+        { text: "¿Cuál es la función técnica crítica del Intel Thread Director dentro de la arquitectura híbrida de la marca?",
+          options: ["Monitorear cargas térmicas y ajustar dinámicamente las frecuencias de reloj.", "Decidir la asignación de hilos entre núcleos de alto rendimiento y eficiencia.", "Optimizar el flujo de datos entre la GPU integrada y la memoria del sistema.", "Reducir la latencia de acceso a los niveles de caché compartidos del silicio.", "Gestionar la telemetría de datos entre los chiplets de la arquitectura modular."],
+          correct: "b",
+          explanation: "Correcta (b): El Thread Director es un componente hardware-software que decide en tiempo real qué hilo se asigna a un P-core o E-core. Las otras opciones describen funciones generales de gestión de energía o memoria que no definen su función maestra."
+        },
+        { text: "¿Qué problema arquitectónico específico resuelve la implementación de memoria unificada en la serie Ryzen AI Max?",
+          options: ["La fragmentación de datos en los diferentes niveles de la memoria caché L2 y L3.", "La latencia generada por la copia de datos entre la CPU, la GPU y la NPU.", "El consumo excesivo de energía durante los ciclos de refresco de la memoria RAM.", "La limitación física de ancho de banda en los buses de comunicación del sistema.", "La falta de coherencia de caché en sistemas con múltiples sockets de procesador."],
+          correct: "b",
+          explanation: "Correcta (b): El enfoque de AMD elimina la necesidad de copiar datos entre espacios de memoria separados para cada componente, reduciendo latencia y consumo."
+        },
+        { text: "¿Cómo impacta el diseño de chiplets en la eficiencia de fabricación comparado con el enfoque monolítico tradicional?",
+          options: ["Permite utilizar procesos de fabricación distintos para cada bloque funcional del chip.", "Elimina por completo la necesidad de interconexiones de alta velocidad internas.", "Reduce la superficie total del encapsulado al integrar todos los núcleos en uno.", "Garantiza que todos los componentes del procesador operen a la misma frecuencia.", "Facilita la refrigeración pasiva al separar físicamente los núcleos de alto consumo."],
+          correct: "a",
+          explanation: "Correcta (a): La arquitectura de chiplets permite fabricar cada bloque con el proceso más adecuado, mejorando el rendimiento por vatio."
+        },
+        { text: "¿Cuál es el beneficio primordial de integrar NPUs directamente en el procesador principal en dispositivos de borde?",
+          options: ["Aumentar la velocidad de descarga de modelos de lenguaje desde servidores nube.", "Ejecutar tareas de inferencia de IA local sin saturar los núcleos de uso general.", "Reemplazar la necesidad de una GPU dedicada para todas las tareas de renderizado.", "Optimizar la comunicación inalámbrica mediante algoritmos de IA de bajo nivel.", "Permitir la ejecución de aplicaciones de productividad en modo de ahorro extremo."],
+          correct: "b",
+          explanation: "Correcta (b): Las NPUs integradas permiten inferencia local sin agotar la batería ni saturar los núcleos de propósito general."
+        },
+        { text: "¿Qué estrategia técnica define la ventaja competitiva de la familia Xeon Sierra Forest de Intel en centros de datos?",
+          options: ["El uso masivo de núcleos de alto rendimiento para cálculos científicos complejos.", "La integración de memoria 3D V-Cache para reducir la latencia en bases de datos.", "La densidad extrema de núcleos eficientes para optimizar nubes de gran escala.", "El soporte nativo para la ejecución distribuida de modelos de visión artificial.", "La capacidad de overclocking automático en entornos de virtualización crítica."],
+          correct: "c",
+          explanation: "Correcta (c): Sierra Forest ofrece densidad extrema de núcleos eficientes para nubes masivas, maximizando el throughput por vatio."
+        },
+        { text: "¿Qué innovación estructural distingue al nodo Intel 18A de las generaciones de fabricación anteriores?",
+          options: ["La reducción del tamaño de los transistores sin modificar la entrega de energía.", "La integración de más funciones en el mismo espacio mediante mayor densidad.", "El uso exclusivo de materiales orgánicos para la base de los sustratos del chip.", "La eliminación de los controladores de memoria externos para reducir el volumen.", "La implementación de una arquitectura de núcleos idénticos en paralelo masivo."],
+          correct: "b",
+          explanation: "Correcta (b): El nodo 18A permite empaquetar más transistores y lograr mayor integración funcional sin aumentar el consumo."
+        },
+        { text: "¿Cuál es el efecto técnico de la tecnología 3D V-Cache de AMD en aplicaciones sensibles a la memoria?",
+          options: ["Aumenta la capacidad total de la memoria RAM disponible para el sistema operativo.", "Reduce la latencia de acceso a datos mediante el apilamiento vertical de caché.", "Permite la transferencia inalámbrica de datos entre el procesador y la memoria.", "Duplica la frecuencia de operación de los núcleos Zen 5 en cargas de trabajo de IA.", "Facilita la división de hilos de ejecución entre núcleos de rendimiento y eficiencia."],
+          correct: "b",
+          explanation: "Correcta (b): La memoria caché apilada verticalmente reduce la latencia de acceso, beneficiando al gaming y aplicaciones profesionales."
+        },
+        { text: "¿Qué requisito técnico es indispensable para la transición del 'AI PC' al concepto de 'Agent Computer'?",
+          options: ["La conexión permanente a servidores de alta velocidad para el procesamiento.", "La ejecución de agentes autónomos que aprendan del contexto de forma local.", "El aumento de la frecuencia de reloj por encima de los límites térmicos actuales.", "La estandarización de los sistemas operativos en una sola plataforma global.", "La sustitución total de los núcleos de eficiencia por unidades de procesamiento IA."],
+          correct: "b",
+          explanation: "Correcta (b): El Agent Computer requiere sistemas capaces de ejecutar agentes de IA autónomos que aprendan del contexto localmente."
+        },
+        { text: "¿Por qué la arquitectura tradicional de memorias separadas se considera un cuello de botella para los LLMs locales?",
+          options: ["Porque limita la cantidad de núcleos que pueden acceder al disco de estado sólido.", "Porque exige transferencias constantes de datos entre CPU, GPU y memoria NPU.", "Porque requiere que el sistema operativo gestione cada ciclo de lectura de la IA.", "Porque impide que el procesador alcance su temperatura óptima de operación.", "Porque reduce la velocidad de reloj de la NPU al detectar cargas de trabajo altas."],
+          correct: "b",
+          explanation: "Correcta (b): El movimiento de datos entre componentes consume energía y genera latencia, crítico en modelos grandes como los LLMs."
+        },
+        { text: "¿Cómo ha evolucionado el concepto de multiprocesamiento según las tendencias de 2025-2026?",
+          options: ["Ha pasado de tener muchos núcleos idénticos a una especialización funcional.", "Ha priorizado el aumento de la memoria caché sobre el número total de núcleos.", "Ha abandonado el uso de chiplets para regresar a diseños monolíticos potentes.", "Ha delegado toda la carga de procesamiento de IA a tarjetas gráficas externas.", "Ha eliminado la distinción entre núcleos de alto rendimiento y núcleos de ahorro."],
+          correct: "a",
+          explanation: "Correcta (a): La industria ha transitado de núcleos idénticos en paralelo hacia una arquitectura de especialización funcional dentro del encapsulado."
+        },
+        { text: "¿En qué se enfoca primordialmente la arquitectura de Panther Lake (Core Ultra Series 3)?",
+          options: ["En maximizar el número de hilos de ejecución para servidores de alto tráfico.", "En optimizar la eficiencia de la NPU y la autonomía en dispositivos móviles.", "En proporcionar la mayor frecuencia de reloj para usuarios entusiastas de PC.", "En reducir el costo de fabricación mediante el uso de nodos de proceso antiguos.", "En integrar la mayor cantidad posible de memoria 3D V-Cache en el procesador."],
+          correct: "b",
+          explanation: "Correcta (b): Panther Lake prioriza la eficiencia de la NPU para IA local y la optimización de la batería en notebooks."
+        },
+        { text: "¿Qué capacidad técnica permite la ejecución de modelos de IA de más de 70B parámetros en un portátil moderno?",
+          options: ["La presencia de una NPU con arquitectura de 1,8 nm integrada en el sistema.", "El acceso a un pool de memoria unificada de alta velocidad de hasta 192 GB.", "La utilización de núcleos de eficiencia para gestionar las capas del modelo.", "La conexión mediante fibra óptica a granjas de servidores de entrenamiento.", "La implementación de algoritmos de compresión de hilos en el Thread Director."],
+          correct: "b",
+          explanation: "Correcta (b): La memoria unificada de gran capacidad en la serie Ryzen AI Max permite ejecutar LLMs pesados localmente."
+        },
+        { text: "¿Qué diferencia al Intel Thread Director de un planificador de tareas de software convencional?",
+          options: ["Su capacidad para gestionar la instalación automática de controladores de IA.", "Su integración como componente hardware que toma decisiones en nanosegundos.", "Su enfoque exclusivo en la gestión de la interfaz gráfica del usuario de Windows.", "Su función de cifrado de datos antes de ser enviados a la memoria RAM principal.", "Su habilidad para desactivar núcleos de rendimiento cuando la batería está baja."],
+          correct: "b",
+          explanation: "Correcta (b): No es un simple software, sino hardware integrado que monitoriza carga, temperatura y energía en tiempo real."
+        },
+        { text: "¿Cuál es el objetivo principal del escalado de núcleos en la arquitectura Nova Lake (Core Ultra Series 4)?",
+          options: ["Lograr una densidad de núcleos eficientes superior para entornos de nube masiva.", "Mejorar el IPC y el rendimiento multihilo para usuarios profesionales y gaming.", "Reducir el consumo energético total por debajo de los niveles de Panther Lake.", "Integrar controladores de memoria de baja latencia específicos para servidores.", "Sustituir el uso de chiplets por una arquitectura monolítica de mayor tamaño."],
+          correct: "b",
+          explanation: "Correcta (b): Nova Lake escala hasta 16 P-cores + 32 E-cores con mejoras de IPC para escritorio y gaming."
+        },
+        { text: "¿Cómo contribuye la arquitectura de chiplets de AMD EPYC (Zen 5) a los centros de datos de IA?",
+          options: ["Permitiendo configuraciones de alta densidad de núcleos optimizadas para inferencia.", "Eliminando la necesidad de refrigeración líquida en servidores de alto rendimiento.", "Reduciendo el número de sockets necesarios mediante la integración de la GPU.", "Facilitando la conexión directa de cada núcleo a una dirección IP independiente.", "Estandarizando el uso de núcleos de eficiencia en todas las capas del servidor."],
+          correct: "a",
+          explanation: "Correcta (a): Permite configuraciones modulares con decenas de núcleos por socket optimizados para inferencia y entrenamiento."
+        },
+        { text: "¿Qué impacto tiene el uso de NPUs en la autonomía de los portátiles modernos durante tareas inteligentes?",
+          options: ["Aumenta el consumo de energía al requerir frecuencias de reloj más elevadas.", "Permite ejecutar funciones de IA local sin agotar rápidamente la batería.", "Obliga al sistema a reducir el rendimiento de la GPU para conservar carga.", "Reduce la vida útil de la batería debido al calor generado por la inferencia.", "Elimina la necesidad de optimización energética por parte del sistema operativo."],
+          correct: "b",
+          explanation: "Correcta (b): Las NPUs integradas permiten inferencia local de forma eficiente, preservando la autonomía del dispositivo."
+        },
+        { text: "¿Qué diferencia estratégica existe entre los modelos de fabricación de Intel y AMD en 2026?",
+          options: ["Intel apuesta por la fabricación propia (IDM) mientras AMD usa el modelo fabless.", "Intel se enfoca solo en el diseño de software mientras AMD fabrica su silicio.", "Ambas compañías han decidido abandonar el uso de fábricas externas de terceros.", "AMD lidera la inversión en plantas de fabricación de 1,8 nm en territorio propio.", "Intel ha delegado toda su producción de procesadores de escritorio a TSMC."],
+          correct: "a",
+          explanation: "Correcta (a): Intel apuesta por recuperar el liderazgo con sus propias fábricas (Intel 18A), mientras AMD utiliza el modelo fabless con TSMC."
+        },
+        { text: "¿Qué ventaja práctica ofrece un pool de memoria de 192 GB en la serie Ryzen AI Max?",
+          options: ["Permite abrir múltiples pestañas de navegador sin saturar la memoria caché L1.", "Facilita la ejecución de modelos de lenguaje grandes de forma totalmente local.", "Duplica la velocidad de conexión a internet mediante el uso de buses de IA.", "Asegura que el procesador no supere nunca los límites térmicos de seguridad.", "Reemplaza la necesidad de tener una unidad de almacenamiento de estado sólido."],
+          correct: "b",
+          explanation: "Correcta (b): Esta capacidad es crucial para ejecutar LLMs de alta complejidad directamente en el hardware cliente sin nube."
+        },
+        { text: "¿Cuál es la consecuencia directa de eliminar las barreras de memoria entre CPU, GPU y NPU?",
+          options: ["El incremento de la latencia en las aplicaciones que no utilizan inteligencia artificial.", "La simplificación del desarrollo de aplicaciones de IA de alto rendimiento local.", "La necesidad de rediseñar todos los sistemas operativos desde su núcleo básico.", "El aumento de la temperatura de operación debido a la colisión de datos interna.", "La reducción de la capacidad de almacenamiento total disponible para el usuario."],
+          correct: "b",
+          explanation: "Correcta (b): La arquitectura de memoria unificada eliminará barreras artificiales, democratizando el acceso a modelos complejos para desarrolladores."
+        },
+        { text: "¿Cómo se mide el rendimiento en un PC de escritorio de 2026 según las nuevas tendencias?",
+          options: ["Por la velocidad máxima de reloj alcanzada en un solo núcleo de rendimiento.", "Por la capacidad de gestionar múltiples cargas de IA de forma simultánea.", "Por el tiempo de respuesta en la carga de aplicaciones de oficina tradicionales.", "Por la cantidad de núcleos idénticos que pueden trabajar en paralelo masivo.", "Por la velocidad de transferencia de datos hacia servidores en la nube remota."],
+          correct: "b",
+          explanation: "Correcta (b): El multiprocesamiento ahora se mide por la gestión de cargas mixtas y heterogéneas de IA (videollamadas, asistentes, juegos)."
+        }
+    ];
+
+    let userAnswers = new Array(20).fill(null);
+    let currentIndex = 0;
+
+    const questionContainer = document.getElementById('questionContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const correctionBtn = document.getElementById('correctionBtn');
+    const questionCounterSpan = document.getElementById('questionCounter');
+    const liveScoreSpan = document.getElementById('liveScore');
+    const resultsPanel = document.getElementById('resultsPanel');
+
+    const tonos = ['tono-1', 'tono-2', 'tono-3', 'tono-4', 'tono-5', 'tono-6', 'tono-7', 'tono-8', 'tono-9', 'tono-10'];
+
+    function updateLiveScore() {
+        let correctCount = 0;
+        for (let i = 0; i < userAnswers.length; i++) {
+            if (userAnswers[i] && userAnswers[i] === questionsData[i].correct) correctCount++;
+        }
+        liveScoreSpan.textContent = `✅ Aciertos: ${correctCount} / 20`;
+        return correctCount;
+    }
+
+    function saveAnswer(selectedLetter) {
+        userAnswers[currentIndex] = selectedLetter;
+        updateLiveScore();
+        renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+        const q = questionsData[currentIndex];
+        const selected = userAnswers[currentIndex];
+        const letters = ['a', 'b', 'c', 'd', 'e'];
+        let optionsHtml = '';
+        q.options.forEach((opt, idx) => {
+            const letter = letters[idx];
+            const isChecked = (selected === letter);
+            optionsHtml += `
+                <div class="option" data-letter="${letter}">
+                    <input type="radio" name="question" value="${letter}" id="opt_${letter}" ${isChecked ? 'checked' : ''}>
+                    <label for="opt_${letter}"><strong>${letter.toUpperCase()})</strong> ${opt}</label>
+                </div>
+            `;
+        });
+
+        let feedbackHtml = '';
+        if (selected) {
+            const isCorrect = (selected === q.correct);
+            const correctLetter = q.correct;
+            const correctText = q.options[letters.indexOf(correctLetter)];
+            const explanation = q.explanation;
+            if (isCorrect) {
+                feedbackHtml = `<div class="feedback correct">✅ <strong>¡Correcto!</strong> ${explanation}</div>`;
+            } else {
+                feedbackHtml = `<div class="feedback incorrect">❌ <strong>Incorrecto.</strong> La respuesta correcta es ${correctLetter.toUpperCase()}) ${correctText}.<br>${explanation}</div>`;
+            }
+        } else {
+            feedbackHtml = `<div class="feedback" style="border-left-color:#ffcc88; background:#fff5e6;">⚡ Selecciona una opción para ver la retroalimentación.</div>`;
+        }
+
+        const tonoClass = tonos[currentIndex % tonos.length];
+
+        const html = `
+            <div class="question-card ${tonoClass}">
+                <div class="question-text">${q.text}</div>
+                <div class="options" id="optionsContainer">
+                    ${optionsHtml}
+                </div>
+                ${feedbackHtml}
+            </div>
+        `;
+        questionContainer.innerHTML = html;
+
+        const optionDivs = document.querySelectorAll('.option');
+        optionDivs.forEach(div => {
+            const radio = div.querySelector('input[type="radio"]');
+            const letter = div.getAttribute('data-letter');
+            if (radio) {
+                radio.addEventListener('change', () => {
+                    if (radio.checked) saveAnswer(letter);
+                });
+            }
+            div.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    const radioInside = div.querySelector('input');
+                    if (radioInside && !radioInside.checked) {
+                        radioInside.checked = true;
+                        saveAnswer(letter);
+                    }
+                }
+            });
+        });
+
+        questionCounterSpan.textContent = `Pregunta ${currentIndex+1} / 20`;
+    }
+
+    function showFinalResultsWithPassword() {
+        const password = prompt("🔐 Para ver la corrección total, ingresa la contraseña:");
+        if (password === "Tecno2026") {
+            let correctCount = 0;
+            let detailsHtml = '';
+            for (let i = 0; i < questionsData.length; i++) {
+                const q = questionsData[i];
+                const userAns = userAnswers[i];
+                const isCorrect = (userAns === q.correct);
+                if (isCorrect) correctCount++;
+                const statusIcon = isCorrect ? '✅' : '❌';
+                const userShow = userAns ? userAns.toUpperCase() : '—';
+                const correctShow = q.correct.toUpperCase();
+                detailsHtml += `
+                    <div class="result-item">
+                        <span style="min-width: 30px;">${statusIcon}</span>
+                        <span><strong>Pregunta ${i+1}</strong> (Tu respuesta: ${userShow} / Correcta: ${correctShow})</span>
+                    </div>
+                `;
+            }
+            const percent = Math.round((correctCount / 20) * 100);
+            resultsPanel.innerHTML = `
+                <h3>📊 Resultado final</h3>
+                <div class="result-summary">🎯 Aciertos: ${correctCount} de 20 (${percent}%)</div>
+                <div class="result-detail">${detailsHtml}</div>
+                <button id="closeResultsBtn" class="btn btn-secondary" style="margin-top: 10px; width:100%;">✖ Cerrar resumen</button>
+            `;
+            resultsPanel.style.display = 'block';
+            document.getElementById('closeResultsBtn')?.addEventListener('click', () => {
+                resultsPanel.style.display = 'none';
+            });
+        } else {
+            alert("❌ Solicita la corrección a tu profesor.");
+        }
+    }
+
+    function nextQuestion() {
+        if (currentIndex < 19) {
+            currentIndex++;
+            renderCurrentQuestion();
+        } else {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            if (unanswered > 0) {
+                if (confirm(`Aún tienes ${unanswered} pregunta(s) sin responder. ¿Deseas finalizar de todas formas? Las no respondidas se contarán como incorrectas.`)) {
+                    showFinalResultsWithPassword();
+                }
+            } else {
+                showFinalResultsWithPassword();
+            }
+        }
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCurrentQuestion();
+        } else {
+            alert("Ya estás en la primera pregunta.");
+        }
+    }
+
+    function resetQuiz() {
+        if (confirm("¿Reiniciar todo el cuestionario? Se perderán todas las respuestas.")) {
+            userAnswers = new Array(20).fill(null);
+            currentIndex = 0;
+            resultsPanel.style.display = 'none';
+            updateLiveScore();
+            renderCurrentQuestion();
+        }
+    }
+
+    prevBtn.addEventListener('click', prevQuestion);
+    nextBtn.addEventListener('click', nextQuestion);
+    resetBtn.addEventListener('click', resetQuiz);
+    correctionBtn.addEventListener('click', showFinalResultsWithPassword);
+
+    renderCurrentQuestion();
+    updateLiveScore();
+</script>
+</body>
+</html>
